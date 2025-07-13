@@ -67,7 +67,7 @@ jobs:
     steps:
 
     - id: stale-branches
-      uses: crs-k/stale-branches@1b1680a1ec7ef3845980fe7b4871b88011fc5dcf # v8.2.0
+      uses: crs-k/stale-branches@de68d9358068be991f64ad9058487e2484925d9a # v8.2.1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 8
@@ -98,7 +98,7 @@ jobs:
         fi
 
     - name: Post message to Slack
-      uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+      uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
       with:
         method: chat.postMessage
         token: "${{ secrets.SECRET_SLACK_APP_GITHUB_BOT }}"

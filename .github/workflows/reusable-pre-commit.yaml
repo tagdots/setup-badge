@@ -68,7 +68,7 @@ jobs:
 
     - name: Run Checkov Github Action
       id: checkov
-      uses: bridgecrewio/checkov-action@d1ecbbd991738bb77267c875eff09fe1f2c6e044 # v12.3036.0
+      uses: bridgecrewio/checkov-action@6375fb7a379f76cc615af7b954f0ef630037c351 # v12.3039.0
       with:
         log_level: WARNING
         quiet: false
