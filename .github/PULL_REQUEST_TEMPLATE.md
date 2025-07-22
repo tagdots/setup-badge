@@ -5,13 +5,13 @@ _Summary of the issue_
 
 
 <!-- What's the goal of the Pull Request? -->
-#### Why is this PR created?
+#### Why's this PR created?
 
 _This PR accomplishes the following...._
 
 
 <!-- What's been changed by this PR? -->
-#### What is on the PR?
+#### What's on this PR?
 
 * change 1
 * change 2
