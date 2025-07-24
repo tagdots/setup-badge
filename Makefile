@@ -30,7 +30,7 @@ test:
 	@echo "***************************************************************************"
 	@echo "*** Running coverage tests"
 	@echo "***************************************************************************"
-	coverage run -m unittest -v
+	coverage run
 
 	@echo "\n"
 	@echo "## Create an HTML report of the coverage of the files"
