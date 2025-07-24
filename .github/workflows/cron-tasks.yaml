@@ -50,9 +50,10 @@ jobs:
     - id: stale-issues-prs
       uses: actions/stale@5bef64f19d7facfb25b37b414482c7164d639639 # v9.1.0
       with:
-        stale-issue-message: 'This issue is stale because it has been open 4 days with no activity. Remove stale label or comment or this will be closed in 3 days.'
-        days-before-stale: 14
-        days-before-close: 14
+        stale-issue-message: 'This issue is stale because it has been open 5 days with no activity. Remove stale label or comment or this will be closed in 3 days after stale'
+        days-before-stale: 5
+        days-before-close: 3
+        operations-per-run: 40
 
   stale-branches:
   # https://github.com/crs-k/stale-branches
@@ -67,17 +68,39 @@ jobs:
     steps:
 
     - id: stale-branches
-      uses: crs-k/stale-branches@1b1680a1ec7ef3845980fe7b4871b88011fc5dcf # v8.2.0
+      uses: crs-k/stale-branches@de68d9358068be991f64ad9058487e2484925d9a # v8.2.1
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        days-before-stale: 8
-        days-before-delete: 10
-        pr-check: true
+        # days-before-stale cannot be greater than or equal to days-before-delete
         branches-filter-regex: '^((?!main|badge))'
+        days-before-stale: 4
+        days-before-delete: 6
+        include-protected-branches: true
+        pr-check: true
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  update-pre-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+    - name: Run update-pre-commit
+      id: update-pre-commit
+
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      uses: tagdots/update-pre-commit-action@0da91de0a91c4d24cac35b8576fba69e7abc2365 # 1.0.16
+
+      with:
+        file: .pre-commit-config.yaml
+        dry-run: false
+        open-pr: true
 
   notify-slack:
     if: always()
-    needs: [stale-workflows, stale-issues-prs, stale-branches]
+    needs: [stale-workflows, stale-issues-prs, stale-branches, update-pre-commit]
 
     runs-on: ubuntu-latest
 
@@ -91,14 +114,14 @@ jobs:
       shell: bash
       run: |
         # get overall result from all of the previous jobs
-        if "${{ needs.stale-workflows.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' }}"; then
+        if "${{ needs.stale-workflows.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
           echo "WORKFLOW_RESULT=:white_check_mark:" >> "$GITHUB_OUTPUT"
         else
           echo "WORKFLOW_RESULT=:no_entry:" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Post message to Slack
-      uses: slackapi/slack-github-action@b0fa283ad8fea605de13dc3f449259339835fc52 # v2.1.0
+      uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
       with:
         method: chat.postMessage
         token: "${{ secrets.SECRET_SLACK_APP_GITHUB_BOT }}"
@@ -109,7 +132,8 @@ jobs:
               *Workflow : ${{ github.workflow }} ${{ steps.get-overall-jobs-results.outputs.WORKFLOW_RESULT }}*
               ```
               URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
-              Job: stale-workflows  - ${{ needs.stale-workflows.result }}\n
-              Job: stale-issues-prs - ${{ needs.stale-issues-prs.result }}\n
-              Job: stale-branches   - ${{ needs.stale-branches.result }}
+              Job: stale-workflows   - ${{ needs.stale-workflows.result }}\n
+              Job: stale-issues-prs  - ${{ needs.stale-issues-prs.result }}\n
+              Job: stale-branches    - ${{ needs.stale-branches.result }}\n
+              Job: update-pre-commit - ${{ needs.update-pre-commit.result }}
               ```"
