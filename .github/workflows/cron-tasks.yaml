@@ -15,6 +15,109 @@ permissions:
     pull-requests: read
 
 jobs:
+  demo-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - id: demo-badge
+      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+
+  language-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - id: language-badge
+      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      with:
+        badge-name: language
+        label: Language
+        message: Python
+        message-color: FFA500
+
+  license-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - id: license-badge
+      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      with:
+        badge-name: license
+        badge-url: https://raw.githubusercontent.com/tagdots-dev/python-test/refs/heads/main/LICENSE
+        label: License
+        message: MIT
+        message-color: FFA500
+
+  coverage-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    outputs:
+      COV_PER: ${{ steps.get-coverage-results.outputs.COV_PER }}
+      COV_RUN: ${{ steps.get-coverage-results.outputs.COV_RUN }}
+
+    steps:
+    - id: checkout-source-code
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+
+    - id: setup-Python
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - id: install-python-deps
+      run: make test-install
+
+    - id: coverage-run
+      env:
+        PYTHONUNBUFFERED: "1"
+      run: make test
+
+    - id: get-coverage-results
+      run: |
+        # get coverage results
+        echo "COV_RUN=${{ steps.run-coverage.outcome }}"                  >> "$GITHUB_OUTPUT"
+        echo "COV_PER=$(coverage report | grep TOTAL | awk '{print $6}')" >> "$GITHUB_OUTPUT"
+
+    - id: upload-coverage
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: coverage
+        path: htmlcov/
+        if-no-files-found: error
+        retention-days: 1
+        overwrite: true
+        compression-level: 6
+
+    - id: coverage-badge
+      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      with:
+        badge-name: coverage
+        badge-url: https://github.com/tagdots-dev/python-test/actions/workflows/cron-badges.yaml
+        label: "Code Coverage"
+        message: "${{ steps.get-coverage-results.outputs.COV_PER }}"
+
+  marketplace-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - id: marketplace-badge
+      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      with:
+        badge-name: marketplace
+        badge-url: https://github.com/marketplace/actions/setup-badge-action
+        label: Marketplace
+        message: setup-badge-action
+        message-color: FF6360
+
   stale-workflows: # https://github.com/Mattraks/delete-workflow-runs
     runs-on: ubuntu-latest
 
@@ -92,7 +195,7 @@ jobs:
 
   notify-slack:
     if: always()
-    needs: [stale-workflows, stale-issues-prs, stale-branches, update-pre-commit]
+    needs: [coverage-badge, marketplace-badge, stale-workflows, stale-issues-prs, stale-branches, update-pre-commit]
 
     runs-on: ubuntu-latest
 
@@ -106,7 +209,7 @@ jobs:
       shell: bash
       run: |
         # get overall result from all of the previous jobs
-        if "${{ needs.stale-workflows.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
+        if "${{ needs.coverage-badge.result == 'success' && needs.marketplace-badge.result == 'success' && needs.stale-workflows.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
           echo "WORKFLOW_RESULT=:white_check_mark:" >> "$GITHUB_OUTPUT"
         else
           echo "WORKFLOW_RESULT=:no_entry:" >> "$GITHUB_OUTPUT"
@@ -124,6 +227,8 @@ jobs:
               *Workflow : ${{ github.workflow }} ${{ steps.get-overall-jobs-results.outputs.WORKFLOW_RESULT }}*
               ```
               URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
+              Job: coverage-badge    - ${{ needs.coverage-badge.result }}\n
+              Job: marketplace-badge - ${{ needs.marketplace-badge.result }}\n
               Job: stale-workflows   - ${{ needs.stale-workflows.result }}\n
               Job: stale-issues-prs  - ${{ needs.stale-issues-prs.result }}\n
               Job: stale-branches    - ${{ needs.stale-branches.result }}\n
