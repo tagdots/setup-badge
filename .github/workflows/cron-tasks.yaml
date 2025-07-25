@@ -15,18 +15,16 @@ permissions:
     pull-requests: read
 
 jobs:
-  stale-workflows:
-  # https://github.com/Mattraks/delete-workflow-runs
+  stale-workflows: # https://github.com/Mattraks/delete-workflow-runs
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
       actions: write
 
-    runs-on: ubuntu-latest
-
     steps:
-
-    - id: stale-workflows
+    - name: Run stale-workflows
+      id: stale-workflows
       uses: Mattraks/delete-workflow-runs@39f0bbed25d76b34de5594dceab824811479e5de # v2.0.6
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,8 +32,8 @@ jobs:
         retain_days: 5
         keep_minimum_runs: 8
 
-  stale-issues-prs:
-  # https://github.com/actions/stale
+  stale-issues-prs: # https://github.com/actions/stale
+    runs-on: ubuntu-latest
 
     permissions:
       actions: write
@@ -43,11 +41,9 @@ jobs:
       issues: write
       pull-requests: write
 
-    runs-on: ubuntu-latest
-
     steps:
-
-    - id: stale-issues-prs
+    - name: Run stale-issues-prs
+      id: stale-issues-prs
       uses: actions/stale@5bef64f19d7facfb25b37b414482c7164d639639 # v9.1.0
       with:
         stale-issue-message: 'This issue is stale because it has been open 5 days with no activity. Remove stale label or comment or this will be closed in 3 days after stale'
@@ -55,19 +51,17 @@ jobs:
         days-before-close: 3
         operations-per-run: 40
 
-  stale-branches:
-  # https://github.com/crs-k/stale-branches
+  stale-branches: # https://github.com/crs-k/stale-branches
+    runs-on: ubuntu-latest
 
     permissions:
       issues: write
       contents: write
       pull-requests: read
 
-    runs-on: ubuntu-latest
-
     steps:
-
-    - id: stale-branches
+    - name: Run stale-branches
+      id: stale-branches
       uses: crs-k/stale-branches@de68d9358068be991f64ad9058487e2484925d9a # v8.2.1
       with:
         # days-before-stale cannot be greater than or equal to days-before-delete
@@ -78,8 +72,9 @@ jobs:
         pr-check: true
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-  update-pre-commit:
+  update-pre-commit: # https://github.com/tagdots/update-pre-commit-action
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
       pull-requests: write
@@ -87,12 +82,9 @@ jobs:
     steps:
     - name: Run update-pre-commit
       id: update-pre-commit
-
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       uses: tagdots/update-pre-commit-action@0da91de0a91c4d24cac35b8576fba69e7abc2365 # 1.0.16
-
       with:
         file: .pre-commit-config.yaml
         dry-run: false
