@@ -123,7 +123,7 @@ _**Endpoint Badge**_<br>
 
 ✅ validated inputs from command line options
 ✅ checkout local branch (badges)
-✅ created badges/badge.json
+✅ created badges/license.json
 ✅ found changes ready to stage, commit, and push to origin
 ✅ pushed commit (dd8906c) to remote branch (badges)
 
@@ -144,7 +144,7 @@ _**Endpoint Badge**_<br>
 
 ✅ validated inputs from command line options
 ✅ checkout local branch (badges)
-✅ created badges/badge.json
+✅ created badges/marketplace.json
 ✅ found changes ready to stage, commit, and push to origin
 ✅ pushed commit (8991c28) to remote branch (badges)
 
