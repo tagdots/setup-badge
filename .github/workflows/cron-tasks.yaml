@@ -18,10 +18,12 @@ permissions:
     pull-requests: read
 
 jobs:
-  badge-coverage:
+  badge-coverage: # https://github.com/tagdots/setup-badge-action
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+      pull-requests: write
 
     outputs:
       COV_PER: ${{ steps.get-coverage-results.outputs.COV_PER }}
@@ -41,6 +43,7 @@ jobs:
 
     - id: coverage-run
       env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PYTHONUNBUFFERED: "1"
       run: make test
 
@@ -61,21 +64,22 @@ jobs:
         compression-level: 6
 
     - id: coverage-badge
-      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
       with:
         badge-name: coverage
         badge-url: https://github.com/tagdots/setup-badge/actions/workflows/cron-tasks.yaml
         label: "Code Coverage"
         message: "${{ steps.get-coverage-results.outputs.COV_PER }}"
 
-  badge-marketplace:
+  badge-marketplace: # https://github.com/tagdots/setup-badge-action
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
 
     steps:
     - id: marketplace-badge
-      uses: tagdots/setup-badge-action@3989b8b5c1c81c961b76d125c8ea50fc7739d9cf # 1.0.0
+      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
       with:
         badge-name: marketplace
         badge-url: https://github.com/marketplace/actions/setup-badge-action
@@ -152,7 +156,7 @@ jobs:
       id: update-pre-commit
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: tagdots/update-pre-commit-action@0da91de0a91c4d24cac35b8576fba69e7abc2365 # 1.0.16
+      uses: tagdots/update-pre-commit-action@939e74b030e11eeb313414e9488b1b233dc32f84 # 1.0.19
       with:
         file: .pre-commit-config.yaml
         dry-run: false
