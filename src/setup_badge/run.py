@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Purpose: Generate a badge to showcase on README
+Purpose: Generate an endpoint badge to showcase on README
 """
 
 import json

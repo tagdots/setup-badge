@@ -8,11 +8,12 @@
 <br>
 
 ## 😎 Why you need setup-badge?
+Repository badges highlight your project's key aspects such as `build status`, `code coverage percentage`, `software version`, `license` and more.
+
 **setup-badge** empowers you to create `dynamic` and `static` endpoint badges to showcase on your README file.
 
-In a dynamic badge, the `message` changes over time.  e.g. code coverage percentage and software version.  In a static badge, the `message` does not change regularly over time.  e.g. license and programming language.
-
-_p.s. `message` refers to the right side of a badge_
+> **Note:**<br>
+> _dynamic badge changes regularly over time (e.g. code coverage percentage and software version)<br>static badge doesn't change regularly over time (e.g. license and programming language)_
 
 <br>
 
@@ -24,14 +25,14 @@ Under the hood, **setup-badge** creates a [shields.io endpoint badge](https://sh
 ![badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/badge.json)
 ```
 
-#### Overall workflow is outlined below.
+#### setup-badge workflow is outlined below.
 
 1. **setup-badge** runs with [command line options](https://github.com/tagdots/setup-badge?tab=readme-ov-file#-setup-badge-command-line-options).
 1. **setup-badge** adds/updates a json file from your options.
 1. **setup-badge** pushes a commit to the remote branch.
 1. **endpoint badge** is created with `shields.io endpoint` and `your json file`.
 
-Now, you are ready to put `endpoint badge` into your README file.
+Afterwards, you can put `endpoint badge` into your README file.
 
 ![How It Works](https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/assets/setup-badge.png)
 
@@ -198,9 +199,14 @@ Open an [issue][issues]
 
 ## 🙏  Contributing
 
-Pull requests and stars are always welcome.  For pull requests to be accepted on this project, you should follow [PEP8][pep8] when creating/updating Python codes.
+For pull requests to be accepted on this project, you should follow [PEP8][pep8] when creating/updating Python codes.
 
 See [Contributing][contributing]
+
+<br>
+
+## 🙌 Appreciation
+If you find this project helpful, please ⭐ star it.  **Thank you**.
 
 <br>
 
