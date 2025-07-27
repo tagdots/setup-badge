@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 1.0.3 (2025-07-26)
+
+### Feat
+
+- add badges to cron-tasks
+
+### Fix
+
+- get action up-to-date on cron-tasks
+- update README to correct typos
+
 ## 1.0.0 (2025-07-25)
 
 ### Feat
