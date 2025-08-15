@@ -87,22 +87,31 @@ jobs:
         message: setup-badge-action
         message-color: FF6360
 
-  stale-workflows: # https://github.com/Mattraks/delete-workflow-runs
+  stale-workflow-runs: # https://github.com/tagdots/delete-workflow-runs-action
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
       actions: write
+      contents: read
 
     steps:
-    - name: Run stale-workflows
-      id: stale-workflows
-      uses: Mattraks/delete-workflow-runs@39f0bbed25d76b34de5594dceab824811479e5de # v2.0.6
+
+    - name: Run stale-workflow-runs
+      id: stale-workflow-runs
+      uses: tagdots/delete-workflow-runs-action@563f02090cdf93da6798bcf304238e8ac383c49e # 1.0.2
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        repository: ${{ github.repository }}
-        retain_days: 5
-        keep_minimum_runs: 8
+        repo-url: ${{ github.repository }}
+        max-days: 10
+        dry-run: false
+
+    - name: Get data and set GITHUB_OUTPUT
+      id: get_data
+      shell: bash
+      run: |
+        # get data from the last step to set GITHUB_OUTPUT
+        cat data_dict.log | jq .
 
   stale-issues-prs: # https://github.com/actions/stale
     runs-on: ubuntu-latest
@@ -162,14 +171,14 @@ jobs:
         dry-run: false
         open-pr: true
 
-  notify-slack:
+  notify-slack: # https://github.com/slackapi/slack-github-action
     if: always()
-    needs: [badge-coverage, badge-marketplace, stale-workflows, stale-issues-prs, stale-branches, update-pre-commit]
+    needs: [badge-coverage, badge-marketplace, stale-workflow-runs, stale-issues-prs, stale-branches, update-pre-commit]
 
     runs-on: ubuntu-latest
 
     outputs:
-      WORKFLOW_RESULT: ${{ steps.get-previous-jobs-results.outputs.WORKFLOW_RESULT }}
+      WORKFLOW_RESULT: ${{ steps.get-overall-jobs-results.outputs.WORKFLOW_RESULT }}
 
     steps:
 
@@ -178,7 +187,7 @@ jobs:
       shell: bash
       run: |
         # get overall result from all of the previous jobs
-        if "${{ needs.badge-coverage.result == 'success' && needs.badge-marketplace.result == 'success' && needs.stale-workflows.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
+        if "${{ needs.badge-coverage.result == 'success' && needs.badge-marketplace.result == 'success' && needs.stale-workflow-runs.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
           echo "WORKFLOW_RESULT=:white_check_mark:" >> "$GITHUB_OUTPUT"
         else
           echo "WORKFLOW_RESULT=:no_entry:" >> "$GITHUB_OUTPUT"
@@ -196,10 +205,10 @@ jobs:
               *Workflow : ${{ github.workflow }} ${{ steps.get-overall-jobs-results.outputs.WORKFLOW_RESULT }}*
               ```
               URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
-              Job: badge-coverage    - ${{ needs.badge-coverage.result }}\n
-              Job: badge-marketplace - ${{ needs.badge-marketplace.result }}\n
-              Job: stale-workflows   - ${{ needs.stale-workflows.result }}\n
-              Job: stale-issues-prs  - ${{ needs.stale-issues-prs.result }}\n
-              Job: stale-branches    - ${{ needs.stale-branches.result }}\n
-              Job: update-pre-commit - ${{ needs.update-pre-commit.result }}
+              Job: badge-coverage      - ${{ needs.badge-coverage.result }}\n
+              Job: badge-marketplace   - ${{ needs.badge-marketplace.result }}\n
+              Job: stale-workflow-runs - ${{ needs.stale-workflow-runs.result }}\n
+              Job: stale-issues-prs    - ${{ needs.stale-issues-prs.result }}\n
+              Job: stale-branches      - ${{ needs.stale-branches.result }}\n
+              Job: update-pre-commit   - ${{ needs.update-pre-commit.result }}
               ```"
