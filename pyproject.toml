@@ -28,7 +28,7 @@ dependencies = [
   "gitpython==3.1.45",
   "setuptools==80.9.0",
   "validators==0.35.0",
-  "virtualenv==20.33.1",
+  "virtualenv==20.34.0",
 ]
 
 optional-dependencies.test = [
