@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.0.17 (2025-08-20)
+
+### Fix
+
+- fix the stuck version comment on codeql-action at v3.29.5
+- add fail-on-severity configuration to report low level vulnerabilities
+- add delete-branches-action on stale-branches
+- action typos
+
 ## 1.0.11 (2025-08-15)
 
 ### Fix
