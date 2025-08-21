@@ -97,7 +97,7 @@ jobs:
     steps:
     - name: Run stale-workflow-runs
       id: stale-workflow-runs
-      uses: tagdots/delete-workflow-runs-action@58a1d5cc098bd375f82e70a5c8b45261024f100c # 1.0.4
+      uses: tagdots/delete-workflow-runs-action@8c2f169b7c560df6c1ee6d001f51ba8be0e4acfd # 1.0.7
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -141,7 +141,7 @@ jobs:
     steps:
     - name: Run stale-branches
       id: stale-branches
-      uses: tagdots/delete-branches-action@ff424d3a4af5b29492bd8b778887583259b3e573 # 1.0.0
+      uses: tagdots/delete-branches-action@fad59ec4b73f3a47a2b8687ec8613e25a832debc # 1.0.2
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
