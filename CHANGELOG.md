@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 1.1.18 (2025-11-08)
+
+### Fix
+
+- upgrade to use Python 3.14
+- update cron-tasks - delete-workflow-runs and delete-branches
+
+### Refactor
+
+- improve code quality - type hint, static checking
+
 ## 1.0.17 (2025-08-20)
 
 ### Fix
