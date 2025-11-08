@@ -3,6 +3,7 @@
 """
 Purpose: tests
 """
+import os
 
 import git
 import pytest
@@ -20,11 +21,20 @@ from setup_badge.run import (
 )
 
 
+@pytest.fixture
+def get_repo():
+    """
+    Get repo class object 'git.repo.base.Repo'
+    Return: repo object
+    """
+    return git.Repo(os.getcwd())
+
+
 def test_get_repo(get_repo):
     """
     Test to verify that get_repo fixture provides a valid GitPython Repo object
     """
-    assert isinstance(get_repo, git.repo.base.Repo)
+    assert isinstance(get_repo, git.Repo)
     assert get_repo.working_dir is not None
 
 
@@ -43,7 +53,7 @@ def test_checkout_branch_return_detached_branch_object(get_repo):
     print(f'\nCheckout branch result: {result}')
 
     assert result is not None
-    assert isinstance(result, git.refs.head.Head)
+    assert isinstance(result, git.Head)
 
 
 def test_checkout_branch_return_branch_object(get_repo):
@@ -61,7 +71,31 @@ def test_checkout_branch_return_branch_object(get_repo):
     print(f'\nCheckout branch result: {result}')
 
     assert result is not None
-    assert isinstance(result, git.refs.head.Head)
+    assert isinstance(result, git.Head)
+
+
+def test_checkout_branch_return_exception(get_repo):
+    """
+    Test checkout branch (scenario: badge branch exists in both local and remote but local is dirty)
+
+    Expect Result: None
+    """
+    remote_name = 'origin'
+    badge_branch = 'ci-testing'
+    gitconfig_name = 'Mona Lisa'
+    gitconfig_email = 'mona.lisa@github.com'
+
+    file_path = "file"
+    with open(file_path, 'w') as file:
+        file.write("test")
+
+    result = checkout_branch(get_repo, remote_name, badge_branch, gitconfig_name, gitconfig_email)
+    print(f'\nCheckout branch result: {result}')
+
+    os.remove(file_path)
+
+    assert result is None
+    assert not isinstance(result, git.Head)
 
 
 def test_checkout_branch_return_none_01(get_repo):
@@ -76,7 +110,7 @@ def test_checkout_branch_return_none_01(get_repo):
     gitconfig_name = 'Mona Lisa'
     gitconfig_email = 'mona.lisa@github.com'
 
-    result = checkout_branch(get_repo, remote_name, badge_branch, gitconfig_name, gitconfig_email)
+    result = checkout_branch(get_repo, remote_name, badge_branch, gitconfig_name, gitconfig_email)  # type: ignore
     print(f'\nCheckout branch result: {result}')
 
     assert result is None
@@ -251,7 +285,7 @@ def test_create_badge_json_return_false():
     badge_dict = ''
     badge_name = 'ci-testing'
 
-    result = create_badge_json(badge_dict, badge_name)
+    result = create_badge_json(badge_dict, badge_name)  # type: ignore
     print(f'\nCreate badge JSON from python dictionary result: {result}')
 
     assert result is False
@@ -269,7 +303,7 @@ def test_push_changes_return_none_01(get_repo):
     remote_name = 'origin'
     msg_suffix = '[CI - Testing]'
 
-    assert push_changes(repo, remote_name, badge_branch, badge_name, msg_suffix) is None
+    assert push_changes(repo, remote_name, badge_branch, badge_name, msg_suffix) is None  # type: ignore
 
 
 def test_push_changes_return_none_02(get_repo):
