@@ -97,11 +97,11 @@ jobs:
     steps:
     - name: Run delete-workflow-runs
       id: delete-workflow-runs
-      uses: tagdots/delete-workflow-runs@f2c3f2194a36cb75a380cf33d0a644f6cab7e222 # 1.1.22
+      uses: tagdots/delete-workflow-runs@4303b7da352de2004b0c5f118420cf9f1d63a370 # 1.2.33
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo-url: ${{ github.repository }}
+        repo-url: ${{ github.server_url }}/${{ github.repository }}
         max-days: 10
         dry-run: false
 
@@ -141,11 +141,11 @@ jobs:
     steps:
     - name: Run delete-branches
       id: delete-branches
-      uses: tagdots/delete-branches@65148311051bce5e4aacf608d07fce29dad8a2a8 # 1.1.3
+      uses: tagdots/delete-branches@1067f6cf756a462d2da56cffae2df37ea15b600e # 1.2.15
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo-url: ${{ github.repository }}
+        repo-url: ${{ github.server_url }}/${{ github.repository }}
         max-idle-days: 10
         exclude-branches: 'badges'
         dry-run: false
