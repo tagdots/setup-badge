@@ -64,7 +64,7 @@ jobs:
         compression-level: 6
 
     - id: coverage-badge
-      uses: tagdots/setup-badge-action@c6514d52c3cef8d85e05fcf20b3b8c5f965d6b50 # 1.0.17
+      uses: tagdots/setup-badge-action@294661aa1f149b59dfe1cd187539eca7f8f0fabf # 1.0.18
       with:
         badge-name: coverage
         badge-url: https://github.com/tagdots/setup-badge/actions/workflows/cron-tasks.yaml
@@ -79,7 +79,7 @@ jobs:
 
     steps:
     - id: marketplace-badge
-      uses: tagdots/setup-badge-action@c6514d52c3cef8d85e05fcf20b3b8c5f965d6b50 # 1.0.17
+      uses: tagdots/setup-badge-action@294661aa1f149b59dfe1cd187539eca7f8f0fabf # 1.0.18
       with:
         badge-name: marketplace
         badge-url: https://github.com/marketplace/actions/setup-badge-action
@@ -162,7 +162,7 @@ jobs:
       id: update-pre-commit
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: tagdots/update-pre-commit-action@7b2124d4ac1abdaf462b2ee85312e2b564aa2709 # 1.0.27
+      uses: tagdots/update-pre-commit-action@a80688d12cf761973e340674bcf552af366afba5 # 1.0.28
       with:
         file: .pre-commit-config.yaml
         dry-run: false
