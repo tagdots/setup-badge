@@ -18,12 +18,11 @@ permissions:
     pull-requests: read
 
 jobs:
-  badge-coverage: # https://github.com/tagdots/setup-badge-action
+  pre-badge-coverage:
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
-      pull-requests: write
 
     outputs:
       COV_PER: ${{ steps.get-coverage-results.outputs.COV_PER }}
@@ -31,7 +30,7 @@ jobs:
 
     steps:
     - id: checkout-source-code
-      uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # 5.0.1
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
     - id: setup-Python
       uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
@@ -63,13 +62,20 @@ jobs:
         overwrite: true
         compression-level: 6
 
+  badge-coverage: # https://github.com/tagdots/setup-badge-action
+    runs-on: ubuntu-latest
+    needs: pre-badge-coverage
+    permissions:
+      contents: write
+
+    steps:
     - id: coverage-badge
       uses: tagdots/setup-badge-action@294661aa1f149b59dfe1cd187539eca7f8f0fabf # 1.0.18
       with:
         badge-name: coverage
         badge-url: https://github.com/tagdots/setup-badge/actions/workflows/cron-tasks.yaml
         label: "Code Coverage"
-        message: "${{ steps.get-coverage-results.outputs.COV_PER }}"
+        message: "${{ needs.pre-badge-coverage.outputs.COV_PER }}"
 
   badge-marketplace: # https://github.com/tagdots/setup-badge-action
     runs-on: ubuntu-latest
