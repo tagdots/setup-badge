@@ -39,7 +39,7 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
 
     - id: install-python-deps
-      run: make test-install
+      run: make local-install
 
     - id: coverage-run
       env:
