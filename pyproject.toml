@@ -26,18 +26,19 @@ classifiers = [
 dependencies = [
   "click==8.3.1",
   "gitpython==3.1.45",
-  "setuptools==80.9.0",
   "validators==0.35.0",
-  "virtualenv==20.35.4",
+]
+
+optional-dependencies.local = [
+  "commitizen",
+  "pre-commit",
 ]
 
 optional-dependencies.test = [
   "build",
-  "commitizen",
   "coverage",
   "flake8",
   "isort",
-  "pre-commit",
   "pyscan-rs",
   "pytest",
   "twine",
