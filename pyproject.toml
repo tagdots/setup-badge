@@ -1,19 +1,16 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-
-requires = [ "setuptools", "wheel" ]
+requires = [ "setuptools" ]
 
 [project]
 name = "setup-badge"
 version = "1.1.18"
-
 readme = "README.md"
 license-files = [ "LICENSE" ]
 authors = [
   { name = "developers", email = "developers@tagdots.com" },
 ]
 requires-python = ">=3.12.10"
-
 classifiers = [
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3 :: Only",
@@ -22,18 +19,15 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Build Tools",
 ]
-
 dependencies = [
-  "click==8.3.1",
-  "gitpython==3.1.45",
+  "click==8.4.2",
+  "gitpython==3.1.52",
   "validators==0.35.0",
 ]
-
 optional-dependencies.local = [
   "commitizen",
   "pre-commit",
 ]
-
 optional-dependencies.test = [
   "build",
   "coverage",
@@ -43,13 +37,11 @@ optional-dependencies.test = [
   "pytest",
   "twine",
 ]
-
 urls.Changelog = "https://github.com/tagdots/setup-badge/blob/main/CHANGELOG.md"
 urls.Documentation = "https://github.com/tagdots/setup-badge/blob/main/README.md"
 urls.Homepage = "https://github.com/tagdots"
 urls.Issues = "https://github.com/tagdots/setup-badge/issues"
 urls.Repository = "https://github.com/tagdots/setup-badge"
-
 scripts.setup-badge = "setup_badge.run:main"
 
 [dependency-groups]
@@ -57,11 +49,9 @@ test = [
   "coverage[toml]",
 ]
 
-[tool.setuptools.packages.find]
-where = [ "src" ]
-
-[tool.setuptools.dynamic]
-version = { attr = "src.setup_badge.__init__" }
+[tool.setuptools]
+packages.find.where = [ "src" ]
+dynamic.version = { attr = "src.setup_badge.__init__" }
 
 [tool.pyproject-fmt]
 column_width = 125
@@ -69,26 +59,22 @@ indent = 2
 keep_full_version = true
 
 [tool.coverage]
+run.branch = true
+run.command_line = "-m pytest -vs"
+run.include = [ "src/setup_badge/*" ]
+run.omit = [ "tests/*" ]
+report.fail_under = 80
+report.include = [ "src/setup_badge/*" ]
+report.show_missing = false
 source = [ "." ]
-
-[tool.coverage.run]
-branch = true
-command_line = "-m pytest -vs"
-include = [ "src/setup_badge/*" ]
-omit = [ "tests/*" ]
-
-[tool.coverage.report]
-fail_under = 80
-show_missing = false
-include = [ "src/setup_badge/*" ]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-major_version_zero = false
-tag_format = "$version"
-update_changelog_on_bump = true
+version_scheme = "pep440"
+version_provider = "pep621"
 version_files = [
   "src/setup_badge/__init__.py:__version__",
 ]
-version_provider = "pep621"
-version_scheme = "pep440"
+major_version_zero = false
+tag_format = "$version"
+update_changelog_on_bump = true
