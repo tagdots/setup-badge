@@ -21,7 +21,7 @@ classifiers = [
 ]
 dependencies = [
   "click~=8.4.2",
-  "gitpython~=3.1.52",
+  "gitpython~=3.1.59",
   "validators~=0.35.0",
 ]
 urls.Changelog = "https://github.com/tagdots/setup-badge/blob/main/CHANGELOG.md"
