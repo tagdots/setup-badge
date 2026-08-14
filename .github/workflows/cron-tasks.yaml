@@ -90,40 +90,12 @@ jobs:
           label: "Code Coverage"
           message: "${{ needs.pre-badge-coverage.outputs.COV_PER }}"
 
-  badge-marketplace:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Run setup-badge-action # https://github.com/tagdots/setup-badge-action
-        id: badge-marketplace
-        uses: tagdots/setup-badge-action@294661aa1f149b59dfe1cd187539eca7f8f0fabf # 1.0.18
-        with:
-          badge-name: marketplace
-          badge-url: https://github.com/marketplace/actions/setup-badge-action
-          label: Marketplace
-          message: "setup-badge-action"
-          message-color: FF6360
-
   stale-workflow-runs:
     runs-on: ubuntu-latest
 
     permissions:
       actions: write
       contents: read
-
-    outputs:
-      DRY_RUN: ${{ steps.get_data.outputs.dry_run }}
-      REPO_URL: ${{ steps.get_data.outputs.repo_url }}
-      MAX_DAYS: ${{ steps.get_data.outputs.max_days }}
-      MIN_RUNS: ${{ steps.get_data.outputs.min_runs }}
-      LIMIT_EST: ${{ steps.get_data.outputs.limit_usage_est }}
-      LIMIT_REM: ${{ steps.get_data.outputs.limit_rem }}
-      LIMIT_RES: ${{ steps.get_data.outputs.limit_res }}
-      ACTIVE_CT: ${{ steps.get_data.outputs.active_ct }}
-      ORPHAN_CT: ${{ steps.get_data.outputs.orphan_ct }}
 
     steps:
       - name: Run delete-workflow-runs # https://github.com/tagdots/delete-workflow-runs
@@ -141,15 +113,6 @@ jobs:
         shell: bash
         run: |
           cat data_dict.log | jq .
-          echo "dry_run=$(cat data_dict.log | jq '."dry-run"')" >> $GITHUB_OUTPUT
-          echo "repo_url=$(cat data_dict.log | jq '."repo-url"')" >> $GITHUB_OUTPUT
-          echo "max_days=$(cat data_dict.log | jq '."max-days"')" >> $GITHUB_OUTPUT
-          echo "min_runs=$(cat data_dict.log | jq '."min-runs"')" >> $GITHUB_OUTPUT
-          echo "limit_usage_est=$(cat data_dict.log | jq '."core-limit-usage-estimate"')" >> $GITHUB_OUTPUT
-          echo "limit_rem=$(cat data_dict.log | jq '."core-limit-remaining"')" >> $GITHUB_OUTPUT
-          echo "limit_res=$(cat data_dict.log | jq '."core-limit-reset"')" >> $GITHUB_OUTPUT
-          echo "active_ct=$(cat data_dict.log | jq '."delete-active-workflow-runs-count"')" >> $GITHUB_OUTPUT
-          echo "orphan_ct=$(cat data_dict.log | jq '."delete-orphan-workflow-runs-count"')" >> $GITHUB_OUTPUT
 
   stale-issues-prs:
     runs-on: ubuntu-latest
@@ -161,9 +124,9 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Run stale-issues-prs # https://github.com/actions/stale
+      - name: Run stale # https://github.com/actions/stale
         id: stale-issues-prs
-        uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f # v10.2.0
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
         with:
           stale-issue-message: "This issue is stale because it has been open 5 days with no activity. Remove stale label or comment or this will be closed in 3 days after stale"
           days-before-stale: 5
@@ -212,7 +175,6 @@ jobs:
     needs:
       [
         badge-coverage,
-        badge-marketplace,
         stale-workflow-runs,
         stale-issues-prs,
         stale-branches,
@@ -228,7 +190,12 @@ jobs:
         id: get-overall-jobs-results
         shell: bash
         run: |
-          if "${{ needs.badge-coverage.result == 'success' && needs.badge-marketplace.result == 'success' && needs.stale-workflow-runs.result == 'success' && needs.stale-issues-prs.result == 'success' && needs.stale-branches.result == 'success' && needs.update-pre-commit.result == 'success' }}"; then
+          if ${{
+            needs.badge-coverage.result == 'success'
+            && needs.stale-workflow-runs.result == 'success'
+            && needs.stale-issues-prs.result == 'success'
+            && needs.stale-branches.result == 'success'
+            && needs.update-pre-commit.result == 'success' }}; then
             echo "WORKFLOW_RESULT=:white_check_mark:" >> "$GITHUB_OUTPUT"
           else
             echo "WORKFLOW_RESULT=:no_entry:" >> "$GITHUB_OUTPUT"
@@ -247,7 +214,6 @@ jobs:
               ```
               URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n
               Job: badge-coverage      - ${{ needs.badge-coverage.result }}\n
-              Job: badge-marketplace   - ${{ needs.badge-marketplace.result }}\n
               Job: stale-workflow-runs - ${{ needs.stale-workflow-runs.result }}\n
               Job: stale-issues-prs    - ${{ needs.stale-issues-prs.result }}\n
               Job: stale-branches      - ${{ needs.stale-branches.result }}\n
