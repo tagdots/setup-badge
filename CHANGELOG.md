@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.1.22 (2026-08-14)
+
+### Fix
+
+- update pre-commit-config and pyproject.toml accordingly
+- update github url
+
 ## 1.1.18 (2025-11-08)
 
 ### Fix
