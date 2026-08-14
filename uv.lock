@@ -618,7 +618,7 @@ wheels = [
 
 [[package]]
 name = "setup-badge"
-version = "1.1.18"
+version = "1.1.22"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
