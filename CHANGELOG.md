@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.2.1 (2026-09-23)
+
+
+- docs: revise documentation to integrate action
+
 ## 1.2.0 (2026-09-23)
 
 
