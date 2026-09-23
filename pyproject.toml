@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "setup-badge"
-version = "1.2.0"
+version = "1.2.1"
 readme = "README.md"
 license-files = [ "LICENSE" ]
 authors = [
