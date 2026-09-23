@@ -13,6 +13,7 @@ The CLI command creates badges by:
 6. Restore the original branch
 """
 
+import configparser
 import json
 import os
 import sys
@@ -76,14 +77,24 @@ def checkout_branch(
     # Step 1: Ensure git config exists (user.name/user.email), which is
     # essential for CI environments where these values might be missing.
     try:
-        reader = repo.config_reader()
-        config_name = reader.get_value("user", "name", default=None)
-        config_email = reader.get_value("user", "email", default=None)
+        # Check if git config has user.name and user.email
+        config_name = None
+        config_email = None
 
-        if config_name is None or config_email is None:
-            # Git config is missing (typical in CI), set defaults
-            with repo.config_writer() as writer:
+        # Try to read existing config
+        try:
+            reader = repo.config_reader()
+            config_name = reader.get_value("user", "name", default=None)
+            config_email = reader.get_value("user", "email", default=None)
+        except (configparser.NoSectionError, Exception):
+            # No config file exists or section is missing - will create with defaults
+            pass
+
+        # Set defaults if missing
+        with repo.config_writer() as writer:
+            if config_name is None:
                 writer.set_value("user", "name", gitconfig_name)
+            if config_email is None:
                 writer.set_value("user", "email", gitconfig_email)
     except Exception as e:
         raise Exception(f"Failed to set git configuration: {e}")
