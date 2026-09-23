@@ -386,6 +386,48 @@ class TestCheckoutBranch:
         with pytest.raises(Exception, match="Failed to set git configuration"):
             checkout_branch(mock_repo, "new-branch")
 
+    def test_git_config_with_no_config_file_error(self, mock_repo):
+        """Test that git config is set when config_reader raises NoConfigFileError."""
+        # configparser.NoConfigFileError doesn't exist; the error is NoSectionError
+        # For testing purposes, we just test with a generic exception
+        writer = MagicMock()
+        writer.__enter__ = MagicMock(return_value=writer)
+        writer.__exit__ = MagicMock(return_value=False)
+        mock_repo.config_reader = MagicMock(side_effect=Exception("No section: 'user'"))
+        mock_repo.config_writer = MagicMock(return_value=writer)
+        mock_repo.heads = {}
+        mock_repo.remote.return_value.refs = []
+        mock_branch = MagicMock()
+        mock_branch.checkout.return_value = mock_branch
+        mock_repo.create_head = MagicMock(return_value=mock_branch)
+        mock_repo.remote.return_value.push = MagicMock()
+
+        result = checkout_branch(mock_repo, "new-branch")
+
+        assert result is not None
+        # Verify config was set
+        assert writer.set_value.call_count >= 2
+
+    def test_git_config_with_section_error(self, mock_repo):
+        """Test that git config is set when config_reader raises NoSectionError."""
+        writer = MagicMock()
+        writer.__enter__ = MagicMock(return_value=writer)
+        writer.__exit__ = MagicMock(return_value=False)
+        mock_repo.config_reader = MagicMock(side_effect=Exception("No section: 'user'"))
+        mock_repo.config_writer = MagicMock(return_value=writer)
+        mock_repo.heads = {}
+        mock_repo.remote.return_value.refs = []
+        mock_branch = MagicMock()
+        mock_branch.checkout.return_value = mock_branch
+        mock_repo.create_head = MagicMock(return_value=mock_branch)
+        mock_repo.remote.return_value.push = MagicMock()
+
+        result = checkout_branch(mock_repo, "new-branch")
+
+        assert result is not None
+        # Verify config was set
+        assert writer.set_value.call_count >= 2
+
 
 class TestCreateShieldsioEndpointBadge:
     def test_endpoint_badge_without_url(self, mock_repo):
