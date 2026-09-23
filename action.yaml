@@ -1,0 +1,109 @@
+name: "Setup Badge"
+
+description: "Run setup-badge to create shields.io endpoint badges to showcase on your README"
+
+author: tagdots
+
+branding:
+  icon: award
+  color: green
+
+inputs:
+  badge-name:
+    description: "Badge Name"
+    default: "badge"
+
+  badge-branch:
+    description: "Badge Branch"
+    default: "badges"
+
+  badge-style:
+    description: "Badge Style (flat, flat-square, plastic, for-the-badge, social)"
+    default: "flat"
+
+  badge-url:
+    description: "Badge Clickable URL"
+    default: ""
+
+  label:
+    description: "Left side text"
+    default: "demo"
+
+  label-color:
+    description: "Left side background color (hex color)"
+    default: "2e2e2e"
+
+  message:
+    description: "Right side text"
+    default: "no status"
+
+  message-color:
+    description: "Right side background color (hex color)"
+    default: "2986CC"
+
+  remote-name:
+    description: "Remote Name"
+    default: "origin"
+
+  gitconfig-name:
+    description: "Git config user name"
+    default: "Mona Lisa"
+
+  gitconfig-email:
+    description: "Git config user email"
+    default: "mona.lisa@github.com"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Setup Python # https://github.com/marketplace/actions/setup-python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: "3.14.x"
+
+    - name: Setup UV # https://github.com/marketplace/actions/astral-sh-setup-uv
+      uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+      with:
+        enable-cache: "true"
+        version: 0.12.x
+
+    - name: Install App
+      shell: bash
+      run: |
+        uv venv
+        uv pip install -U setup-badge
+
+    - name: Show Versions
+      shell: bash
+      run: |
+        echo "Python Version : $(python --version)"
+        echo "UV Version     : $(uv --version)"
+        echo "App Version    : $(uv run setup-badge --version)"
+
+    - name: Run setup-badge
+      shell: bash
+      env:
+        INPUT_BADGE_NAME: "${{ inputs.badge-name }}"
+        INPUT_BADGE_BRANCH: "${{ inputs.badge-branch }}"
+        INPUT_BADGE_STYLE: "${{ inputs.badge-style }}"
+        INPUT_BADGE_URL: "${{ inputs.badge-url }}"
+        INPUT_LABEL: "${{ inputs.label }}"
+        INPUT_LABEL_COLOR: "${{ inputs.label-color }}"
+        INPUT_MESSAGE: "${{ inputs.message }}"
+        INPUT_MESSAGE_COLOR: "${{ inputs.message-color }}"
+        INPUT_REMOTE_NAME: "${{ inputs.remote-name }}"
+        INPUT_GITCONFIG_NAME: "${{ inputs.gitconfig-name }}"
+        INPUT_GITCONFIG_EMAIL: "${{ inputs.gitconfig-email }}"
+      run: |
+        setup-badge \
+          --badge-name "$INPUT_BADGE_NAME" \
+          --badge-branch "$INPUT_BADGE_BRANCH" \
+          --badge-style "$INPUT_BADGE_STYLE" \
+          --badge-url "$INPUT_BADGE_URL" \
+          --label "$INPUT_LABEL" \
+          --label-color "$INPUT_LABEL_COLOR" \
+          --message "$INPUT_MESSAGE" \
+          --message-color "$INPUT_MESSAGE_COLOR" \
+          --gitconfig-name "$INPUT_GITCONFIG_NAME" \
+          --gitconfig-email "$INPUT_GITCONFIG_EMAIL"
