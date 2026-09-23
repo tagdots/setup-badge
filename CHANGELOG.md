@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.2.2 (2026-09-23)
+
+
+- fix: resolve exception due to no git config
+
 ## 1.2.1 (2026-09-23)
 
 
