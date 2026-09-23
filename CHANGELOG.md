@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.2.0 (2026-09-23)
+
+
+- fix: fix action
+- feat: add action
+- refactor: on checkout_branch, simplify and fix bugs
+- fix pyproject-fmt
+- build: fix coverage break due to pyproject-fmt
+
 ## 1.1.22 (2026-08-14)
 
 ### Fix
