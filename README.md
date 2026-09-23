@@ -30,7 +30,7 @@ Under the hood, **setup-badge** creates a [shields.io endpoint badge](https://sh
 
 #### setup-badge workflow is outlined below.
 
-1. **setup-badge** runs with [command line options](https://github.com/tagdots/setup-badge?tab=readme-ov-file#-setup-badge-command-line-options).
+1. **setup-badge** runs with [command line options](https://github.com/tagdots/setup-badge#-run-setup-badge-command-line-options).
 1. **setup-badge** adds/updates a json file from your options.
 1. **setup-badge** pushes a commit to the remote branch.
 1. **endpoint badge** is created with `shields.io endpoint` and `your json file`.
@@ -45,7 +45,7 @@ Afterwards, you can put `endpoint badge` into your README file.
 
 ### Summary: create multiple static badges
 
-**setup-badge-action**:
+**setup-badge**:
 
 - runs `on demand`
 - creates two static badges: `language` and `license`
@@ -55,7 +55,7 @@ Afterwards, you can put `endpoint badge` into your README file.
 ### Example: create multiple static badges
 
 ```
-name: setup-badge-action
+name: setup-badge
 
 on:
   workflow_dispatch:
@@ -72,7 +72,7 @@ jobs:
 
     steps:
     - id: language-badge
-      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      uses: tagdots/setup-badge@<commit sha> # 1.2.3
       with:
         badge-name: language
         label: Language
@@ -87,7 +87,7 @@ jobs:
 
     steps:
     - id: license-badge
-      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      uses: tagdots/setup-badge@<commit sha> # 1.2.3
       with:
         badge-name: license
         badge-url: https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
@@ -100,7 +100,7 @@ jobs:
 
 ### Summary: create a dynamic badge
 
-**setup-badge-action**:
+**setup-badge**:
 
 - runs `on schedule at 5:30 pm UTC` or `on demand`
 - runs a coverage test and get the coverage percentage from the test result
@@ -109,7 +109,7 @@ jobs:
 ### Example: create a dynamic badge
 
 ```
-name: setup-badge-action
+name: setup-badge
 
 on:
   schedule:
@@ -139,7 +139,7 @@ jobs:
         echo "COV_PER=$(...coverage run results...)" >> "$GITHUB_OUTPUT"
 
     - id: coverage-badge
-      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      uses: tagdots/setup-badge@<commit sha> # 1.2.3
       with:
         badge-name: coverage
         label: "Code Coverage"
@@ -162,8 +162,7 @@ In this use case, you run **setup-badge** manually with the steps below:
 In the example below, we first install **setup-badge** in a Python virtual environment.
 
 ```
-~/work/setup-badge $ workon setup-badge
-(setup-badge) ~/work/setup-badge $ pip install -U setup-badge
+~/work/<your project> $ uv pip install -U setup-badge
 ```
 
 <br>
@@ -186,10 +185,10 @@ In the example below, we first install **setup-badge** in a Python virtual envir
 
 <br><br>
 
-🏃 _**Run to create a license badge**_: `--badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE`
+🏃 _**CLI Options**_: `--badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE`
 
 ```
-(setup-badge) ~/work/setup-badge $ setup-badge --badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
+~/work/<your project> $ uv run setup-badge --badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
 
 🚀 Starting to create a badge (license.json) in branch (badges)...
 
@@ -200,6 +199,7 @@ In the example below, we first install **setup-badge** in a Python virtual envir
 ✅ pushed commit (dd8906c) to remote branch (badges)
 
 🎉 Endpoint Badge: [![license](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/license.json)](https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE)
+🤩 Branch restored to original active branch: main
 ```
 
 _**Endpoint Badge**_<br>
@@ -207,10 +207,10 @@ _**Endpoint Badge**_<br>
 
 <br><br>
 
-🏃 _**Run to create a marketplace badge**_: `--badge-name marketplace --label Marketplace --message setup-badge-action --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge-action`
+🏃 _**CLI Options**_: `--badge-name marketplace --label Marketplace --message setup-badge --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge`
 
 ```
-(setup-badge) ~/work/setup-badge $ setup-badge --badge-name marketplace --label Marketplace --message setup-badge-action --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge-action
+(setup-badge) ~/work/setup-badge $ setup-badge --badge-name marketplace --label Marketplace --message setup-badge --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge
 
 🚀 Starting to create a badge (marketplace.json) in branch (badges)...
 
@@ -220,11 +220,12 @@ _**Endpoint Badge**_<br>
 ✅ found changes ready to stage, commit, and push to origin
 ✅ pushed commit (8991c28) to remote branch (badges)
 
-🎉 Endpoint Badge: [![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge-action)
+🎉 Endpoint Badge: [![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge)
+🤩 Branch restored to original active branch: main
 ```
 
 _**Endpoint Badge**_<br>
-[![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge-action)
+[![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge)
 
 <br><br>
 

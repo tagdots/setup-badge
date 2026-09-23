@@ -124,7 +124,6 @@ def checkout_branch(
 
     # Step 5: Handle the scenarios
     if is_commit_hash:
-        print("temp 1")
         """Scenario A: Branch name is a commit hash (e.g. GitHub PR
         checkout puts HEAD in detached state).
 
@@ -136,7 +135,6 @@ def checkout_branch(
         return cast(git.Head, local_branch.checkout())
 
     elif not local_exists and not remote_exists:
-        print("temp 2")
         """Scenario B: Branch doesn't exist anywhere
 
         - create a new local branch
@@ -148,7 +146,6 @@ def checkout_branch(
         return cast(git.Head, local_branch.checkout())
 
     elif not local_exists and remote_exists:
-        print("temp 3")
         """Scenario C: Branch exists on remote but not local
 
         - create a new local branch from the remote branch
@@ -159,7 +156,6 @@ def checkout_branch(
         return cast(git.Head, local_branch.checkout())
 
     elif local_exists and remote_exists:
-        print("temp 4")
         """Scenario D: Branch exists on both local and remote
 
         - check out the current local branch
@@ -172,7 +168,6 @@ def checkout_branch(
         return cast(git.Head, local_branch.checkout())
 
     elif local_exists and not remote_exists:
-        print("temp 5")
         """Scenario E: Branch exists on local but not remote
         We ran remote.fetch(prune=True) in step 2.  When remote branch no longer
         exists, reference to RemoteReference object is removed.  The .git/config
