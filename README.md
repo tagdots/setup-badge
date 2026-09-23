@@ -1,19 +1,22 @@
-# setup-badge
+# Setup-Badge
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10951/badge)](https://www.bestpractices.dev/projects/10951)
 [![CI](https://github.com/tagdots/setup-badge/actions/workflows/ci.yaml/badge.svg)](https://github.com/tagdots/setup-badge/actions/workflows/ci.yaml)
-[![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge-action)
+[![marketplace](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/marketplace.json)](https://github.com/marketplace/actions/setup-badge)
 [![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/coverage.json)](https://github.com/tagdots/setup-badge/actions/workflows/cron-tasks.yaml)
 
 <br>
 
 ## 😎 Why you need setup-badge?
-Repository badges highlight your project's key aspects such as `build status`, `code coverage percentage`, `software version`, `license` and more.
 
-**setup-badge** empowers you to create `dynamic` and `static` endpoint badges to showcase on your README file.
+**Setup-Badge** creates `dynamic` and `static` endpoint badges to showcase on your README file. These badges can highlight key aspects such as `build status`, `code coverage percentage`, `software version`, `license` and more.
 
-> **Note:**<br>
-> _dynamic badge changes regularly over time (e.g. code coverage percentage and software version)<br>static badge doesn't change regularly over time (e.g. license and programming language)_
+<br>
+
+**Note**
+
+- dynamic badge changes over time (e.g. code coverage percentage and software version)
+- static badge doesn't change over time (e.g. license and programming language)
 
 <br>
 
@@ -38,14 +41,115 @@ Afterwards, you can put `endpoint badge` into your README file.
 
 <br>
 
-## Use Case 1️⃣ - running on GitHub action
-In this use case, you run our **setup-badge-action** in a workflow to create badge(s).
+## 🎉 Use Case 1️⃣ - running on GitHub action
 
-Please visit our GitHub action ([setup-badge-action](https://github.com/marketplace/actions/setup-badge-action)) on the `GitHub Marketplace` for details.
+### Summary: create multiple static badges
+
+**setup-badge-action**:
+
+- runs `on demand`
+- creates two static badges: `language` and `license`
+  - language badge does not have a badge url
+  - license badge has a badge url that links to the project's LICENSE file
+
+### Example: create multiple static badges
+
+```
+name: setup-badge-action
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  language-badge:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - id: language-badge
+      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      with:
+        badge-name: language
+        label: Language
+        message: Python
+        message-color: FFA500
+
+  license-badge:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - id: license-badge
+      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      with:
+        badge-name: license
+        badge-url: https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
+        label: License
+        message: MIT
+        message-color: FFA500
+```
+
+<br><br>
+
+### Summary: create a dynamic badge
+
+**setup-badge-action**:
+
+- runs `on schedule at 5:30 pm UTC` or `on demand`
+- runs a coverage test and get the coverage percentage from the test result
+- creates a dynamic `Code Coverage` badge with the coverage % that changes over time
+
+### Example: create a dynamic badge
+
+```
+name: setup-badge-action
+
+on:
+  schedule:
+    - cron: '30 17 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coverage-badge:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    outputs:
+      COV_PER: ${{ steps.get-coverage-results.outputs.COV_PER }}
+
+    steps:
+    - id: coverage-run
+      run: coverage run
+
+    - id: get-coverage-results
+      run: |
+        echo "COV_PER=$(...coverage run results...)" >> "$GITHUB_OUTPUT"
+
+    - id: coverage-badge
+      uses: tagdots/setup-badge-action@663d7a5382b8300caa4492de16e85aa7e4667ef0 # 1.0.3
+      with:
+        badge-name: coverage
+        label: "Code Coverage"
+        message: "${{ steps.get-coverage-results.outputs.COV_PER }}"
+```
 
 <br>
 
-## Use Case 2️⃣ - running locally on your computer
+## 🎉 Use Case 2️⃣ - running CLI locally
+
 In this use case, you run **setup-badge** manually with the steps below:
 
 1. install **setup-badge**.
@@ -58,67 +162,34 @@ In this use case, you run **setup-badge** manually with the steps below:
 In the example below, we first install **setup-badge** in a Python virtual environment.
 
 ```
-~/work/badge-test $ workon badge-test
-(badge-test) ~/work/badge-test $ pip install -U setup-badge
+~/work/setup-badge $ workon setup-badge
+(setup-badge) ~/work/setup-badge $ pip install -U setup-badge
 ```
 
 <br>
 
-### 🔍 run setup-badge
+### 🔧 run setup-badge command line options
 
-Next, we run **setup-badge** with different options and display the results.
-
-<br>
-
-🏃 _**Run to display command line options**_: `--help`
-
-```
-(badge-test) ~/work/badge-test $ setup-badge --help
-Usage: setup-badge [OPTIONS]
-
-Options:
-  --badge-name TEXT       default: badge
-  --badge-branch TEXT     default: badges
-  --badge-url TEXT        default: ''
-  --badge-style TEXT      default: flat (flat, flat-square, plastic, for-the-badge, social)
-  --label TEXT            default: demo (badge left side text)
-  --label-color TEXT      default: 2e2e2e (badge left side hex color)
-  --message TEXT          default: no status (badge right side text)
-  --message-color TEXT    default: 2986CC (badge right side hex color)
-  --remote-name TEXT      default: origin
-  --gitconfig-name TEXT   default: Mona Lisa
-  --gitconfig-email TEXT  default: mona.lisa@github.com
-  --version               Show the version and exit.
-  --help                  Show this message and exit.
-```
-
-<br><br>
-
-🏃 _**Run to create a demo badge**_: `with default command line options`
-
-```
-(badge-test) ~/work/badge-test $ setup-badge
-
-🚀 Starting to create a badge.json in branch (badges)...
-
-✅ validated inputs from command line options
-✅ checkout local branch (badges)
-✅ created badges/badge.json
-✅ found changes ready to stage, commit, and push to origin
-✅ pushed commit (f9c751c) to remote branch (badges)
-
-🎉 Endpoint Badge: ![badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/badge.json)
-```
-
-_**Endpoint Badge**_<br>
-![demo](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/badges/badges/badge.json)
+| Input             | Description                  | Default                | Notes                                                              |
+| ----------------- | ---------------------------- | ---------------------- | ------------------------------------------------------------------ |
+| `badge-name`      | JSON endpoint filename       | `badge`                | JSON endpoint filename                                             |
+| `branch-name`     | Branch to hold JSON endpoint | `badges`               | a single branch can hold multiple JSON endpoint files              |
+| `badge-style`     | Badge style                  | `flat`                 | other options: `flat-square`, `plastic`, `for-the-badge`, `social` |
+| `badge-url`       | Badge URL                    | `''`                   | no default value (enter a url if necessary)                        |
+| `label`           | Left side text               | `demo`                 | -                                                                  |
+| `label-color`     | Left side background color   | `2e2e2e`               | hex color                                                          |
+| `message`         | Right side text              | `no status`            | place dynamic/static data here                                     |
+| `message-color`   | Right side background color  | `2986CC`               | hex color                                                          |
+| `remote-name`     | Git remote source branch     | `origin`               | leave it as-is in general                                          |
+| `gitconfig-name`  | Git config user name         | `Mona Lisa`            | need this option for CI or GitHub action                           |
+| `gitconfig-email` | Git config user email        | `mona.lisa@github.com` | need this option for CI or GitHub action                           |
 
 <br><br>
 
 🏃 _**Run to create a license badge**_: `--badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE`
 
 ```
-(badge-test) ~/work/badge-test $ setup-badge --badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
+(setup-badge) ~/work/setup-badge $ setup-badge --badge-name license --label License --message MIT --message-color FFA500 --badge-url https://raw.githubusercontent.com/tagdots/setup-badge/refs/heads/main/LICENSE
 
 🚀 Starting to create a badge (license.json) in branch (badges)...
 
@@ -139,7 +210,7 @@ _**Endpoint Badge**_<br>
 🏃 _**Run to create a marketplace badge**_: `--badge-name marketplace --label Marketplace --message setup-badge-action --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge-action`
 
 ```
-(badge-test) ~/work/badge-test $ setup-badge --badge-name marketplace --label Marketplace --message setup-badge-action --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge-action
+(setup-badge) ~/work/setup-badge $ setup-badge --badge-name marketplace --label Marketplace --message setup-badge-action --message-color FF6360 --badge-url https://github.com/marketplace/actions/setup-badge-action
 
 🚀 Starting to create a badge (marketplace.json) in branch (badges)...
 
@@ -168,36 +239,18 @@ _**Endpoint Badge**_<br>
 
 ## 🔔 What is next after creating the endpoint badge?
 
-- copy and paste to your README file
+- copy `endpoint badge` output and paste to your README file
 - write a commit and merge your code
 
 <br><br>
 
-## 🔧 setup-badge command line options
-
-| Input | Description | Default | Notes |
-|-------|-------------|----------|----------|
-| `badge-name` | JSON endpoint filename | `badge` | JSON endpoint filename |
-| `branch-name` | Branch to hold JSON endpoint | `badges` | a single branch can hold multiple JSON endpoint files |
-| `badge-style` | Badge style | `flat` | other options: `flat-square`, `plastic`, `for-the-badge`, `social` |
-| `badge-url` | Badge URL | `''` | no default value (enter a url if necessary) |
-| `label` | Left side text | `demo` | - |
-| `label-color` | Left side background color | `2e2e2e` | hex color |
-| `message` | Right side text | `no status` | place dynamic/static data here |
-| `message-color` | Right side background color | `2986CC` | hex color |
-| `remote-name` | Git remote source branch | `origin` | leave it as-is in general |
-| `gitconfig-name` | Git config user name | `Mona Lisa` | need this option for CI or GitHub action |
-| `gitconfig-email` | Git config user email | `mona.lisa@github.com` | need this option for CI or GitHub action |
-
-<br>
-
-## 😕  Troubleshooting
+## 😕 Troubleshooting
 
 Open an [issue][issues]
 
 <br>
 
-## 🙏  Contributing
+## 🙏 Contributing
 
 For pull requests to be accepted on this project, you should follow [PEP8][pep8] when creating/updating Python codes.
 
@@ -206,7 +259,8 @@ See [Contributing][contributing]
 <br>
 
 ## 🙌 Appreciation
-If you find this project helpful, please ⭐ star it.  **Thank you**.
+
+If you find this project helpful, please ⭐ star it. **Thank you**.
 
 <br>
 
